@@ -24,6 +24,7 @@ import (
 func NewRouter(svc *service.Service, webFS fs.FS) *http.ServeMux {
 	mux := http.NewServeMux()
 
+	mux.HandleFunc("GET /health", handleHealth())
 	mux.HandleFunc("POST /api/v1/shorten", handleShorten(svc))
 	mux.HandleFunc("GET /r/{shortCode}", handleRedirect(svc))
 	mux.HandleFunc("GET /api/v1/stats/{shortCode}", handleStats(svc))
@@ -69,6 +70,16 @@ func handleRedirect(svc *service.Service) http.HandlerFunc {
 		}
 
 		http.Redirect(w, r, originalURL, http.StatusMovedPermanently)
+	}
+}
+
+// handleHealth returns a simple liveness check handler that always responds
+// with HTTP 200 and {"status":"ok"}. It has no dependencies on the service,
+// database, or cache, so it can be used as a lightweight ping target.
+func handleHealth() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Write([]byte(`{"status":"ok"}`))
 	}
 }
 
