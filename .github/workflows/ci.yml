@@ -18,7 +18,7 @@ jobs:
 
       - uses: golangci/golangci-lint-action@v6
         with:
-          version: stable
+          version: v1.26.0
 
       - run: go test ./...
 
