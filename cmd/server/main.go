@@ -40,7 +40,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("opening database: %v", err)
 	}
-	defer db.Close() // Ensure the connection pool is closed when main() exits.
+	defer func() {
+		if err := db.Close(); err != nil {
+			log.Printf("closing database: %v", err)
+		}
+	}() // Ensure the connection pool is closed when main() exits.
 
 	ctx := context.Background()
 	// Ping verifies we can actually reach the database.
@@ -56,7 +60,11 @@ func main() {
 
 	// --------------- Redis ---------------
 	rdb := redis.NewClient(&redis.Options{Addr: redisAddr})
-	defer rdb.Close()
+	defer func() {
+		if err := rdb.Close(); err != nil {
+			log.Printf("closing redis: %v", err)
+		}
+	}()
 
 	if err := rdb.Ping(ctx).Err(); err != nil {
 		log.Fatalf("pinging redis: %v", err)

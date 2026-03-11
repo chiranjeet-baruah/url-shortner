@@ -6,6 +6,7 @@ package driver
 import (
 	"encoding/json"
 	"io/fs"
+	"log"
 	"net/http"
 
 	"url-shortener/internal/v1/shortener/dto"
@@ -52,7 +53,9 @@ func handleShorten(svc *service.Service) http.HandlerFunc {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(resp)
+		if err := json.NewEncoder(w).Encode(resp); err != nil {
+			log.Printf("encoding shorten response: %v", err)
+		}
 	}
 }
 
@@ -79,7 +82,9 @@ func handleRedirect(svc *service.Service) http.HandlerFunc {
 func handleHealth() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte(`{"status":"ok"}`))
+		if _, err := w.Write([]byte(`{"status":"ok"}`)); err != nil {
+			log.Printf("writing health response: %v", err)
+		}
 	}
 }
 
@@ -96,6 +101,8 @@ func handleStats(svc *service.Service) http.HandlerFunc {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(resp)
+		if err := json.NewEncoder(w).Encode(resp); err != nil {
+			log.Printf("encoding stats response: %v", err)
+		}
 	}
 }
