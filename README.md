@@ -33,6 +33,14 @@ docker compose up --build
 
 The app is available at **<http://localhost:8080>**.
 
+## Architecture & Design Decisions
+
+This project contains a few non-obvious design choices (e.g., why HTTP 301 for
+redirects, Hexagonal Architecture, Async Click Tracking etc). Each
+decision is documented with its reasoning, trade-offs, and when to reconsider.
+
+See **[ARCHITECTURE.md](ARCHITECTURE.md)** for the full list.
+
 ## Project structure
 
 ```
